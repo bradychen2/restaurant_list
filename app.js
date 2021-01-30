@@ -38,6 +38,11 @@ app.get('/search', (req, res) => {
   res.render('index', { restaurants: restaurants, keyword: keyword, stylesheet: 'index' })
 })
 
+// Go to create page
+app.get('/restaurant/new', (req, res) => {
+  res.render('new', { stylesheet: 'new' })
+})
+
 // server listening
 app.listen(port, () => {
   console.log(`Express server is listening on http://localhost:${port}`)
