@@ -1,7 +1,8 @@
 // import modules and files
 const express = require('express')
 const exphbs = require('express-handlebars')
-const restaurantList = require('./restaurant.json')
+require('./config/mongoose')
+const Restaurant = require('./models/restaurant')
 
 // set required constant for server
 const app = express()
@@ -16,7 +17,13 @@ app.use(express.static('public'))
 
 // route setting for index
 app.get('/', (req, res) => {
-  res.render('index', { restaurants: restaurantList.results, stylesheet: 'index' })
+  Restaurant.find()
+    .lean()
+    .sort({ _id: 'asc' })
+    .then(restaurants => {
+      res.render('index', { restaurants, stylesheet: 'index' })
+    })
+    .catch(error => console.log(error))
 })
 
 // route setting for showing details
@@ -42,6 +49,9 @@ app.get('/search', (req, res) => {
 app.get('/restaurant/new', (req, res) => {
   res.render('new', { stylesheet: 'new' })
 })
+
+// Create new restaurant
+
 
 // server listening
 app.listen(port, () => {
