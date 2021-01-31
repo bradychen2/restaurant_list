@@ -2,6 +2,7 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 require('./config/mongoose')
 const Restaurant = require('./models/restaurant')
 
@@ -16,8 +17,9 @@ app.set('view engine', 'handlebars')
 // set static files
 app.use(express.static('public'))
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(methodOverride('_method'))
 
-// route setting for index
+// Go to Home Page
 app.get('/', (req, res) => {
   Restaurant.find()
     .lean()
@@ -52,7 +54,7 @@ app.post('/restaurants', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// route setting for showing details
+// Show details
 app.get('/restaurants/:id', (req, res) => {
   const id = req.params.id
   return Restaurant.findById(id)
@@ -60,6 +62,39 @@ app.get('/restaurants/:id', (req, res) => {
     .then((restaurant) => res.render('show', { restaurant, stylesheet: 'show' }))
     .catch(error => console.log(error))
 })
+
+// Go to edit
+app.get('/restaurants/:id/edit', (req, res) => {
+  const id = req.params.id
+  return Restaurant.findById(id)
+    .lean()
+    .then((restaurant) => res.render('edit', { restaurant, stylesheet: 'edit' }))
+    .catch(error => console.log(error))
+})
+
+// Send edit form
+app.put('/restaurants/:id', (req, res) => {
+  const id = req.params.id
+
+  return Restaurant.findById(id)
+    .then((restaurant) => {
+
+      restaurant = Object.assign(restaurant, req.body)
+      return restaurant.save()
+    })
+    .then(() => res.redirect(`/restaurants/${id}`))
+    .catch(error => console.log(error))
+})
+
+// Delete restaurant
+app.delete('/restaurants/:id', (req, res) => {
+  const id = req.params.id
+  return Restaurant.findById(id)
+    .then(restaurant => restaurant.remove())
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
+
 
 // route setting for search
 // app.get('/search', (req, res) => {
