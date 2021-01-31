@@ -24,9 +24,25 @@ app.get('/', (req, res) => {
   Restaurant.find()
     .lean()
     .sort({ _id: 'asc' })
-    .then(restaurants => {
-      res.render('index', { restaurants, stylesheet: 'index' })
+    .then(restaurant => {
+      res.render('index', { restaurants: restaurant, stylesheet: 'index' })
     })
+    .catch(error => console.log(error))
+})
+
+// Searching
+app.get('/restaurants/search', (req, res) => {
+  const keyword = req.query.keyword
+  const reg = new RegExp(keyword, 'i') // Not case-sensitive
+  Restaurant.find(
+    {
+      $or: [
+        { name: { $regex: reg } }, { category: { $regex: reg } }
+      ]
+    }
+  )
+    .lean()
+    .then(restaurant => res.render('index', { restaurants: restaurant, stylesheet: 'index' }))
     .catch(error => console.log(error))
 })
 
@@ -94,19 +110,6 @@ app.delete('/restaurants/:id', (req, res) => {
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
-
-
-// route setting for search
-// app.get('/search', (req, res) => {
-//   const keyword = req.query.keyword
-//   const restaurants = restaurantList.results.filter(restaurant => {
-//     // accept searching with names or categories
-//     return restaurant.name.toLowerCase().includes(keyword.toLowerCase()) ||
-//       restaurant.category.toLocaleLowerCase().includes(keyword.toLowerCase())
-//   })
-
-//   res.render('index', { restaurants: restaurants, keyword: keyword, stylesheet: 'index' })
-// })
 
 // server listening
 app.listen(port, () => {

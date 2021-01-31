@@ -52,6 +52,7 @@ header {
 
 .card {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px !important;
 }
 
 .card img{
@@ -76,6 +77,15 @@ header {
   text-align: center;
   font-size: 3rem;
   text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.func-container {
+  margin: 5px 5px;
+  padding: 2px;
+}
+
+.func-container .btn {
+  padding: 4px;
 }
 
 @media screen and (max-width: 992px) {
