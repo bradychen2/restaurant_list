@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../../models/user')
 const router = express.Router()
+const passport = require('passport')
 
 router.get('/login', passport.authenticate('local', {
   successRedirect: '/',
@@ -39,7 +40,8 @@ router.post('/register', (req, res) => {
     })
 })
 
-router.get('logout', (req, res) => {
+router.get('/logout', (req, res) => {
+  req.logout() // Passport logout func
   res.redirect('/users/login')
 })
 
