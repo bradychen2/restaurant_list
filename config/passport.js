@@ -7,7 +7,7 @@ module.exports = app => {
   app.use(passport.session())
 
   passport.use(new LocalStrategy({ usernameField: 'email' }, (email, password, done) => {
-    user.findOne({ email })
+    User.findOne({ email })
       .then(user => {
         if (!user) {
           return done(null, false, { message: 'Email is not registered!' })
