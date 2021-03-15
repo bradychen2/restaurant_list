@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 const session = require('express-session')
+const flash = require('connect-flash')
 require('./config/mongoose')
 const routes = require('./routes')
 const usePassport = require('./config/passport')
@@ -25,12 +26,14 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }))
-
+app.use(flash())
 usePassport(app)
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
+  res.locals.success_msg = req.flash('success_msg')
+  res.locals.warning_msg = req.flash('warning_msg')
   next()
 })
 
