@@ -1,30 +1,30 @@
 const express = require('express')
 const router = express.Router()
 const Restaurant = require('../../models/restaurant')
-
-// Searching
-router.get('/search', (req, res) => {
-  const keyword = req.query.keyword
-  const reg = new RegExp(keyword, 'i') // Not case-sensitive
-  Restaurant.find(
-    {
-      $or: [
-        { name: { $regex: reg } }, { category: { $regex: reg } }
-      ]
-    }
-  )
-    .lean()
-    .then(restaurant => res.render('index', { restaurants: restaurant, stylesheet: 'index' }))
-    .catch(error => console.log(error))
-})
+const mongoose = require('mongoose')
 
 // Go to create page
 router.get('/new', (req, res) => {
   res.render('new', { stylesheet: 'new' })
 })
 
+// Searching
+router.get('/search', (req, res) => {
+  const userId = req.user._id
+  const keyword = req.query.keyword
+  const reg = new RegExp(keyword, 'i') // Not case-sensitive
+  Restaurant.find({
+    $and: [{ userId }, { $or: [{ name: { $regex: reg } }, { category: { $regex: reg } }] }]
+  })
+    .lean()
+    .then(restaurant => res.render('index', { restaurants: restaurant, stylesheet: 'index' }))
+    .catch(error => console.log(error))
+})
+
+
 // Create new restaurant
 router.post('/', (req, res) => {
+  const userId = req.user._id
   const restaurant = req.body
   console.log(restaurant)
 
@@ -37,7 +37,8 @@ router.post('/', (req, res) => {
     phone: restaurant.phone,
     google_map: restaurant.google_map,
     image: restaurant.image,
-    description: restaurant.description
+    description: restaurant.description,
+    userId: userId
   })
     .then(() =>
       res.redirect('/')
@@ -52,8 +53,9 @@ router.post('/', (req, res) => {
 
 // Show details
 router.get('/:id', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render('show', { restaurant, stylesheet: 'show' }))
     .catch(error => console.log(error))
@@ -61,8 +63,9 @@ router.get('/:id', (req, res) => {
 
 // Go to edit
 router.get('/:id/edit', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .lean()
     .then((restaurant) => res.render('edit', { restaurant, stylesheet: 'edit' }))
     .catch(error => console.log(error))
@@ -70,9 +73,9 @@ router.get('/:id/edit', (req, res) => {
 
 // Send edit form
 router.put('/:id', (req, res) => {
-  const id = req.params.id
-
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .then((restaurant) => {
 
       restaurant = Object.assign(restaurant, req.body)
@@ -84,8 +87,9 @@ router.put('/:id', (req, res) => {
 
 // Delete restaurant
 router.delete('/:id', (req, res) => {
-  const id = req.params.id
-  return Restaurant.findById(id)
+  const userId = req.user._id
+  const _id = req.params.id
+  return Restaurant.findOne({ _id, userId })
     .then(restaurant => restaurant.remove())
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
