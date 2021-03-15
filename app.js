@@ -6,6 +6,7 @@ const methodOverride = require('method-override')
 const session = require('express-session')
 require('./config/mongoose')
 const routes = require('./routes')
+const usePassport = require('./config/passport')
 
 // set required constant for server
 const app = express()
@@ -25,6 +26,7 @@ app.use(session({
   saveUninitialized: true
 }))
 
+usePassport(app)
 app.use(routes)
 
 // server listening
