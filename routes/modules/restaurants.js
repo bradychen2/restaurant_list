@@ -13,8 +13,17 @@ router.get('/search', (req, res) => {
   const userId = req.user._id
   const keyword = req.query.keyword
   const reg = new RegExp(keyword, 'i') // Not case-sensitive
+
   Restaurant.find({
-    $and: [{ userId }, { $or: [{ name: { $regex: reg } }, { category: { $regex: reg } }] }]
+    $and: [
+      { userId },
+      {
+        $or: [
+          { name: { $regex: reg } },
+          { category: { $regex: reg } }
+        ]
+      }
+    ]
   })
     .lean()
     .then(restaurant => res.render('index', { restaurants: restaurant, stylesheet: 'index' }))
@@ -77,11 +86,10 @@ router.put('/:id', (req, res) => {
   const _id = req.params.id
   return Restaurant.findOne({ _id, userId })
     .then((restaurant) => {
-
       restaurant = Object.assign(restaurant, req.body)
       return restaurant.save()
     })
-    .then(() => res.redirect(`/restaurants/${id}`))
+    .then(() => res.redirect(`/restaurants/${_id}`))
     .catch(error => console.log(error))
 })
 
