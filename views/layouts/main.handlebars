@@ -8,31 +8,31 @@
     integrity="sha384-vp86vTRFVJgpjF9jiIGPEEqYqlDwgyBgEF109VFjmqGmIY/Y4HV4d3Gp2irVfcrp" crossorigin="anonymous">
   <link rel="stylesheet" href="/stylesheets/bootstrap.css">
   <link rel="stylesheet" href="/stylesheets/{{stylesheet}}.css">
-  <title>Document</title>
+  <title>MY RESTAURANTS</title>
 </head>
 
 <body>
   <header>
     <!-- navigation -->
     <nav class="navbar navbar-light bg-light py-1">
-      <div class="container d-flex justify-content-between align-items-center">
-        <div>
+      <div class="container d-flex justify-content-between">
+        <div class="d-flex align-items-center">
           <a class="navbar-brand" href="/">
             <img src="https://assets-lighthouse.s3.amazonaws.com/uploads/image/file/6227/restaurant-list-logo.png"
               width="30" height="30" class="d-inline-block align-top" alt="我的餐廳清單">
             {{#if isAuthenticated}}{{user.name}}的{{/if}}餐廳清單
           </a>
           {{#if isAuthenticated}}
-          <a href="/restaurants/new" class="btn btn-outline-primary">
-            新增餐廳
+          <a href="/restaurants/new" class="btn btn-link">
+            <i class="fas fa-plus-circle fa-lg">新增餐廳</i>
           </a>
           {{/if}}
         </div>
-
+        {{!-- Login/Logout --}}
         <div class="">
-          {{#if isAuthenticated}}<a href="/users/logout" class="btn btn-outline-info">Logout</a>
+          {{#if isAuthenticated}}<a href="/users/logout" class=""><i class="fas fa-sign-out-alt fa-lg">Logout</i></a>
           {{else}}
-          <a href="/users/login" class="btn btn-outline-info">Login</a>
+          <a href="/users/login" class="btn btn-outline-info"><i class="fas fa-sign-in-alt fa-lg">Login</i></a>
           {{/if}}
         </div>
       </div>
@@ -42,7 +42,6 @@
   </header>
   {{!-- partial template will replace body here --}}
   {{{body}}}
-
   <script src="/javascripts/jquery-3.3.1.js"></script>
   <script src="/javascripts/popper.min.js"></script>
   <script src="/javascripts/bootstrap.js"></script>
