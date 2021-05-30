@@ -15,7 +15,6 @@ passport.use(new LocalStrategy({ usernameField: 'email', passReqToCallback: true
             if (!isMatch) {
               return done(null, false, req.flash('error_msg', 'Email 或密碼不正確!'))
             }
-            console.log(user)
             return done(null, user)
           })
             .catch(err => done(err, false))
