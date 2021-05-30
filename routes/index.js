@@ -12,6 +12,8 @@ module.exports = (app, passport) => {
 
   // --------------------------Restaurant--------------------------
   app.get('/', authenticated, restaurantController.getRestaurants)
+  // Search
+  app.get('/restaurants/search', authenticated, restaurantController.searchRestaurant)
   // Create
   app.get('/restaurants/new', authenticated, restaurantController.getCreateRestaurant)
   app.post('/restaurants', authenticated, restaurantController.postRestaurant)
