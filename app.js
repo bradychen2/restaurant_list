@@ -1,4 +1,3 @@
-// import modules and files
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
@@ -9,8 +8,8 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 require('./config/mongoose')
-const routes = require('./routes')
-const usePassport = require('./config/passport')
+const routes = require('./routes/index')
+const passport = require('./config/passport')
 
 // set required constant for server
 const app = express()
@@ -22,6 +21,7 @@ app.set('view engine', 'handlebars')
 
 // set static files
 app.use(express.static('public'))
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(session({
@@ -30,7 +30,8 @@ app.use(session({
   saveUninitialized: true
 }))
 app.use(flash())
-usePassport(app)
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
@@ -41,9 +42,11 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(routes)
-
 // server listening
 app.listen(port, () => {
   console.log(`Express server is listening on http://localhost:${port}`)
 })
+
+routes(app, passport)
+
+module.exports = app
